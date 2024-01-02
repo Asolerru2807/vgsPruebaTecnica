@@ -14,7 +14,8 @@ class ArticleController extends Controller
     public function index()
     {
         return view('articles', [
-            'articles' => Article::paginate(5)
+            'articles' => Article::paginate(4),
+            'categories' => Categorie::all()
         ]);
     }
 
@@ -31,15 +32,29 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        //Creamos el articulo con sus respectivos elementos en la tabla article
+        $article = Article::create([
+            'title' => request('title'),
+            'content' => request('content'),
+            'slug' => request('slug')
+        ]);
+        //Rellenamos la tabla intermedia para indicar las categorias del articulo
+        $article->categories()->sync($request->input('categories', []));
+
+        return to_route('index');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Article $article)
+    public function show($slug)
     {
-        //
+        //Obtenemos el articulo asociado al slug de la url
+        $article = Article::where('slug', $slug)->first();
+        return view('article', [
+            'article' => $article,
+            'categories' => Categorie::all()
+        ]);
     }
 
     /**
@@ -55,7 +70,16 @@ class ArticleController extends Controller
      */
     public function update(Request $request, Article $article)
     {
-        //
+        $article->update([
+            'title' => request('title'),
+            'content' => request('content'),
+            'slug' => request('slug')
+        ]);
+
+        // Actualizamos las categorías del artículo en la tabla intermedia
+        $article->categories()->sync($request->input('categories', []));
+
+        return to_route('index');
     }
 
     /**
@@ -63,6 +87,7 @@ class ArticleController extends Controller
      */
     public function destroy(Article $article)
     {
-        //
+        $article->delete();
+        return to_route('index');
     }
 }

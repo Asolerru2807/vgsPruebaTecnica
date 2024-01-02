@@ -69,4 +69,16 @@ class CategorieController extends Controller
     {
         //
     }
+
+    /**
+     * Muestra un articulo asociado a la categoría
+     */
+    public function showArticle($categorieSlug, $articleSlug)
+    {
+        $article = Article::where('slug', $articleSlug)->first();
+        return view('article', [
+            'article' => $article,
+            'categories' => Categorie::all()
+        ]);
+    }
 }

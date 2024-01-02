@@ -16,12 +16,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::redirect('/', '/index'); //Redirigimos la ruta inicial a la del index para que sea lo primero que carguemos
-
-Route::get('/index', [ArticleController::class, 'index'])->name('index');
-
-Route::get('/{slug}', [CategorieController::class, 'index'])->name('categories');
-
 /**
  * Rutas hechas por breeze
  */
@@ -36,3 +30,17 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__ . '/auth.php';
+
+/**
+ * Rutas propias
+ */
+Route::redirect('/', '/index'); //Redirigimos la ruta inicial a la del index para que sea lo primero que carguemos
+//Articles
+Route::get('/index', [ArticleController::class, 'index'])->name('index'); //Ver todos los articulos
+Route::post('/articles', [ArticleController::class, 'store'])->name('articles.store'); //Añadir articulos nuevos
+Route::get('/articles/{slug}', [ArticleController::class, 'show'])->name('articles.show'); //Vista de articulo individual
+Route::put('/articles/{article}', [ArticleController::class, 'update'])->name('articles.update'); //Editar articulos
+Route::delete('/articles/{article}', [ArticleController::class, 'destroy'])->name('articles.destroy'); //Eliminar articulos
+//Categories
+Route::get('/{slug}', [CategorieController::class, 'index'])->name('categories'); //Carga los articulos de la categoría que se le pase por URL
+Route::get('/{categorieSlug}/{articleSlug}', [CategorieController::class, 'showArticle'])->name('categories.article'); //Vista de un articulo individual desde la categoría
